@@ -1,6 +1,9 @@
 # Ignore python venv
 myenv/
 
+# Ignore Scripts
+Scripts/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -174,3 +177,16 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
+
+# .tfplan files
+*.tfplan
