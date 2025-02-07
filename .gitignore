@@ -186,7 +186,7 @@ cython_debug/
 *.tfstate.*
 
 # .tfvars files
-*.tfvars
+#*.tfvars
 
 # .tfplan files
 *.tfplan
