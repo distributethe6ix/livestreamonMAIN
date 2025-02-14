@@ -1,5 +1,9 @@
 import time
 import boto3
+import json
+import random
+import string
+import requests
 
 def upload_to_s3(file_path, bucket_name):
     s3 = boto3.client('s3')
@@ -39,7 +43,8 @@ def transcribe_file(job_name, file_uri, transcribe_client):
                     f"Download the transcript from\n"
                     f"\t{job['TranscriptionJob']['Transcript']['TranscriptFileUri']}."
                 )
-                return job ["TranscriptFileUri"]
+
+                return job['TranscriptionJob']['Transcript']['TranscriptFileUri']
             break
         else:
             print(f"Waiting for {job_name}. Current status is {job_status}.")
@@ -50,28 +55,25 @@ def main():
     file_path = input("Enter the file path: ")
     bucket_name = input("Enter the S3 bucket name: ")
     object_url = upload_to_s3(file_path, bucket_name)
+    # Create a random job name
+    job_name = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
     if object_url:
         print(f"File uploaded successfully. Accessible at: {object_url}")
     else:
         print("File upload failed.")
     transcribe_client = boto3.client("transcribe")
-    transcribe_file_summarize = transcribe_file("liveonmain1", object_url, transcribe_client)
+    transcription_object =  transcribe_file(job_name, object_url, transcribe_client)
+    response = requests.get(transcription_object)
+    transcript_data = response.json()
+    print(transcript_data)
     prompt = "You are an transcript analyst. Please summarize this transcript with key details."
-    object_name = transcribe_file_summarize.split('/')[-1]
-    result = summarize_transcript_with_bedrock(bucket_name, object_name, prompt)
+    result = summarize_transcript_with_bedrock(transcript_data, prompt)
+    print(result)
 
-def summarize_transcript_with_bedrock(bucket_name, object_name, prompt):
+def summarize_transcript_with_bedrock(transcript_data, prompt):
     # Assuming you have the AWS Bedrock client set up
     bedrock = boto3.client("bedrock-runtime", region_name="ca-central-1")
-    s3 = boto3.client('s3')
 
-    #Get s3 object
-    #object_name = object_url.split('/')[-1]
-    response = s3.get_object(Bucket=bucket_name, Key=object_name)
-    transcript_content = response['Body'].read().decode("utf-8")
-
-
-    
     payload = {
         "modelId": "anthropic.claude-3-sonnet-20240229-v1:0",
         "contentType": "application/json",
@@ -89,7 +91,7 @@ def summarize_transcript_with_bedrock(bucket_name, object_name, prompt):
                         {
                             "type": "text",
                             "source": {
-                                "data": transcript_content
+                                "data": transcript_data
                             }
                         },
                         {
