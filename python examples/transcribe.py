@@ -65,9 +65,12 @@ def main():
     transcription_object =  transcribe_file(job_name, object_url, transcribe_client)
     response = requests.get(transcription_object)
     transcript_data = response.json()
-    print(transcript_data)
+    # print(transcript_data)
+    # Write the transcript data to a file
+    with open("transcript.json", "w") as outfile:
+        json.dump(transcript_data, outfile, indent=4)
     prompt = "You are an transcript analyst. Please summarize this transcript with key details."
-    result = summarize_transcript_with_bedrock(transcript_data, prompt)
+    result = summarize_transcript_with_bedrock(transcript_data["results"]["transcripts"][0]["transcript"], prompt)
     print(result)
 
 def summarize_transcript_with_bedrock(transcript_data, prompt):
@@ -90,9 +93,7 @@ def summarize_transcript_with_bedrock(transcript_data, prompt):
                     "content": [
                         {
                             "type": "text",
-                            "source": {
-                                "data": transcript_data
-                            }
+                            "text": transcript_data
                         },
                         {
                             "type": "text",
