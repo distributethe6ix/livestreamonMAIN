@@ -1,10 +1,10 @@
 resource "aws_lambda_function" "transcribe_processor" {
-  filename         = "transcribe_function.zip"
-  function_name    = "transcribe-processor"
-  role            = aws_iam_role.lambda_role.arn
-  handler         = "transcribe_function.lambda_handler"
-  runtime         = "python3.11"
-  timeout         = 300
+  filename      = "transcribe_function.zip"
+  function_name = "transcribe-processor"
+  role          = aws_iam_role.lambda_role.arn
+  handler       = "transcribe_function.lambda_handler"
+  runtime       = "python3.11"
+  timeout       = 300
 
   environment {
     variables = {
