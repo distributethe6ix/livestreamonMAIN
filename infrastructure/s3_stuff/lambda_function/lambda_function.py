@@ -11,7 +11,8 @@ def lambda_handler(event, context):
         bucket_name = record['s3']['bucket']['name']
         object_key = record['s3']['object']['key']
         print(f'New object created: {object_key} in bucket: {bucket_name}')
-        job_name = ''.join(random.choices(string.ascii_letters + string.digits, k=10))
+        # Job name should be bucket_name + object_key + current date
+        job_name = f'{bucket_name}-{object_key}-{time.strftime("%Y%m%d-%H%M%S")}'
         file_uri = f's3://{bucket_name}/{object_key}'
         transcription_object =  transcribe_file(job_name, file_uri, transcribe_client)
         print(transcription_object)
