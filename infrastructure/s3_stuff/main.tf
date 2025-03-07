@@ -69,6 +69,11 @@ resource "aws_iam_role_policy" "lambda_policy" {
   })
 }
 
+resource "aws_iam_role_policy_attachment" "transcribe" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonTranscribeFullAccess"
+  role       = aws_iam_role.lambda_role.name
+}
+
 resource "aws_lambda_function" "s3_notification" {
   filename      = "lambda_function.zip"
   function_name = "s3_notification_handler"
