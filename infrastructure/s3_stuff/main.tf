@@ -96,7 +96,7 @@ resource "aws_lambda_permission" "s3_notification" {
   source_arn    = aws_s3_bucket.mah_bucket.arn
 
   lifecycle {
-    replace_triggered_by = [ aws_lambda_function.s3_notification ]
+    replace_triggered_by = [aws_lambda_function.s3_notification]
   }
 }
 
@@ -111,6 +111,6 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
   depends_on = [aws_lambda_permission.s3_notification]
 
   lifecycle {
-    replace_triggered_by = [ aws_lambda_function.s3_notification ]
+    replace_triggered_by = [aws_lambda_function.s3_notification]
   }
 }
