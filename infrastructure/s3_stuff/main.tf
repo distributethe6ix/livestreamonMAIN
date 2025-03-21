@@ -56,6 +56,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Effect = "Allow"
         Action = [
           "s3:GetObject",
+          "s3:PutObject",
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
@@ -71,6 +72,12 @@ resource "aws_iam_role_policy" "lambda_policy" {
 
 resource "aws_iam_role_policy_attachment" "transcribe" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonTranscribeFullAccess"
+  role       = aws_iam_role.lambda_role.name
+}
+
+# Add policy attachment for Bedrock access
+resource "aws_iam_role_policy_attachment" "bedrock" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonBedrockFullAccess"
   role       = aws_iam_role.lambda_role.name
 }
 
